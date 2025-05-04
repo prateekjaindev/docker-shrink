@@ -1,0 +1,20 @@
+# Build stage
+# Stage 1: Build stage
+FROM node:alpine AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install --omit=dev
+
+COPY . .
+
+# Stage 2: Runtime stage
+FROM node:alpine
+
+WORKDIR /app
+
+COPY --from=builder /app /app
+
+EXPOSE 3000
+CMD ["node", "index.js"]

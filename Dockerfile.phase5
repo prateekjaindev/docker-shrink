@@ -1,0 +1,18 @@
+# Step 1: Use Node base image to build the app
+FROM node:22-alpine AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install --only=production
+
+COPY . .
+
+# Step 2: Use distroless image
+FROM gcr.io/distroless/nodejs22
+
+WORKDIR /app
+
+COPY --from=builder /app /app
+
+CMD ["index.js"]
